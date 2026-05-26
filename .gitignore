@@ -1,0 +1,10 @@
+*.env
+*/*.env
+app/node_modules
+app/.vscode
+.vscode/
+book_rec/
+book_rec/*
+app/android
+app/ios
+app/npm*
