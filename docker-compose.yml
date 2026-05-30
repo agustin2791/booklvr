@@ -1,20 +1,47 @@
 services:
+  nginx:
+    image: 535026343353.dkr.ecr.us-east-1.amazonaws.com/nginx
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    platform: linux/amd64
+    container_name: nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+    restart: unless-stopped
   api:
-    image: ahgoose/booklvrapi:0.1
+    image: 535026343353.dkr.ecr.us-east-1.amazonaws.com/booklvr/api:1.0
     build:
       context: ./ai
       dockerfile: Dockerfile
+    platform: linux/amd64
     ports:
       - "8081:8081"
     env_file: api.env
+    restart: unless-stopped
+    networks:
+      - bookrec
 
   app:
+    image: 535026343353.dkr.ecr.us-east-1.amazonaws.com/booklvr/app:1.0
     build:
       context: ./app
       dockerfile: Dockerfile
+      args:
+        VITE_REC_BASE_URL: /api
+    platform: linux/amd64
     ports:
       - "80:80"
     depends_on:
       - api
-    env_file:
-      - api.env
+    restart: unless-stopped
+    networks:
+      - bookrec
+
+networks:
+  bookrec:
+    driver: bridge

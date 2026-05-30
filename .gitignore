@@ -8,3 +8,6 @@ book_rec/*
 app/android
 app/ios
 app/npm*
+
+nginx/
+nginx/*
